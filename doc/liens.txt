@@ -1,0 +1,23 @@
+# flash bootloader sur l'atmega328 && upload sketch
+http://arduino.cc/en/uploads/Tutorial/ArduinoUSBSerialSimple.png
+
+
+# network : 
+http://theboredengineers.com/tag/nrf24l01/
+http://www.instructables.com/id/Arduino-wireless-laser-turret/  # schemas + branchement
+
+
+# pinout :
+http://arduino.cc/en/uploads/Hacking/Atmega168PinMap2.png
+
+# low power :
+#http://www.disk91.com/2014/technology/hardware/arduino-atmega328p-low-power-consumption/
+http://jeelabs.org/2009/05/16/power-consumption-more-savings/
+http://gadgetmakersblog.com/power-consumption-arduinos-atmega328-microcontroller/
+http://www.surprisingedge.com/low-power-atmegatiny-with-watchdog-timer/
+https://www.sparkfun.com/tutorials/309
+
+# low power library :
+https://github.com/rocketscream/Low-Power
+http://www.rocketscream.com/blog/2011/07/04/lightweight-low-power-arduino-library/
+http://hwstartup.wordpress.com/2013/04/15/how-to-run-an-arduino-clone-on-aa-batteries-for-over-a-year-part-2/
