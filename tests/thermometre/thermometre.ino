@@ -11,13 +11,11 @@ boolean getTemperature(float *temp){
   byte data[9], addr[8];
   // data : Données lues depuis le scratchpad
   // addr : adresse du module 1-Wire détecté
-  Serial.print("1");
  
   if (!ds.search(addr)) { // Recherche un module 1-Wire
     ds.reset_search();    // Réinitialise la recherche de module
     return false;         // Retourne une erreur
   }
-  Serial.print("2");
   if (OneWire::crc8(addr, 7) != addr[7]) // Vérifie que l'adresse a été correctement reçue
     return false;                        // Si le message est cor/rompu on retourne une erreur
  
@@ -63,8 +61,5 @@ void loop() {
     Serial.write('C');
     Serial.println();
   }
-  else
-  {
-    Serial.println("echec lecture");
-  }
+
 }
