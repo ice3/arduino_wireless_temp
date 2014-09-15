@@ -20,10 +20,12 @@
 #include <RF24Network.h>
 #include <RF24.h>
 #include <SPI.h>
-#include <OneWire.h> // Inclusion de la librairie OneWire
- 
+#include <OneWire.h>
+#include "LowPower.h"
+
+
 #define DS18B20 0x28     // Adresse 1-Wire du DS18B20
-#define BROCHE_ONEWIRE 7 // Broche utilisée pour le bus 1-Wire
+#define BROCHE_ONEWIRE 6 // Broche utilisée pour le bus 1-Wire
  
 OneWire ds(BROCHE_ONEWIRE); // Création de l'objet OneWire ds
  
@@ -34,12 +36,10 @@ boolean getTemperature(float *temp){
   // data : Données lues depuis le scratchpad
   // addr : adresse du module 1-Wire détecté
  
- Serial.print("search\n");
   if (!ds.search(addr)) { // Recherche un module 1-Wire
     ds.reset_search();    // Réinitialise la recherche de module
     return false;         // Retourne une erreur
   }
-  Serial.print("oneWire\n"); 
   if (OneWire::crc8(addr, 7) != addr[7]) // Vérifie que l'adresse a été correctement reçue
     return false;                        // Si le message est cor/rompu on retourne une erreur
  
@@ -96,10 +96,7 @@ struct payload_t
 };
 
 void setup(void)
-{
-  Serial.begin(9600);
-  Serial.println("RF24Network/examples/helloworld_tx/");
- 
+{ 
   SPI.begin();
   radio.begin();
   network.begin(/*channel*/ 90, /*node address*/ this_node);
@@ -107,33 +104,20 @@ void setup(void)
 
 void loop(void)
 {
-    float temp = -1;
-  // Lit la température ambiante à ~1Hz
-  if(getTemperature(&temp)) {
-     
-    // Affiche la température
-    Serial.print("Temperature : ");
-    Serial.print(temp);
-    Serial.write(176); // caractère °
-    Serial.write('C');
-    Serial.println();
-  }
-  
-  // Pump the network regularly
-  network.update();
-
-  // If it's time to send a message, send it!
-  unsigned long now = millis();
-  if ( now - last_sent >= interval  )
+  radio.powerDown();
+  LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);  
   {
-    last_sent = now;
-    payload_t payload = { temp*100, packets_sent++ };
+    float temp = -1;
+    // Lit la température ambiante à ~1Hz
+    // Pump the network regularly
+    network.update();
+    payload_t payload = { -1, packets_sent };
     RF24NetworkHeader header(/*to node*/ other_node);
-    bool ok = network.write(header,&payload,sizeof(payload));
-    if (ok)
-      Serial.println("ok.");
-    else
-      Serial.println("failed.");
+    if(getTemperature(&temp)) {
+      payload_t payload = { temp*100, packets_sent++ };
+      RF24NetworkHeader header(/*to node*/ other_node);
+      bool ok = network.write(header,&payload,sizeof(payload));
+    }
   }
 }
 // vim:ai:cin:sts=2 sw=2 ft=cpp
